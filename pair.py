@@ -1,17 +1,20 @@
 import pandas as pd
-import numpy as np
+import ast
 
 # Load dataset
-df = pd.read_csv('International_T20_Data.csv')
+df = pd.read_csv("International_T20_Data.csv")
 
-# Rename columns to remove dots
-df.columns = df.columns.str.replace('.', '_')
+# Convert teams column from string to list
+df['teams'] = df['teams'].apply(ast.literal_eval)
 
-# Rename venue column for easier use
-df.rename(columns={'info_venue': 'venue'}, inplace=True)
+# Create a column containing sorted team pairs
+df['team_pair'] = df['teams'].apply(lambda x: tuple(sorted(x)))
 
-# Find top 3 venues
-top_venues = df['venue'].value_counts().head(3)
+# Count matches for each pair
+pair_counts = df['team_pair'].value_counts()
 
-print("Top three venues with the greatest number of matches:")
-print(top_venues)
+# Get the pair with the most matches
+top_pair = pair_counts.head(1)
+
+print("Pair of teams who played the most T20 matches:")
+print(top_pair)
